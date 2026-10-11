@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BMPA Shariah-Compliant DSCR Analyzer | Creed-to-Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #122040;
+    --navy-light: #1a3060;
+    --gold: #c8972a;
+    --gold-light: #e6b84a;
+    --gold-pale: #f5e6c0;
+    --cream: #faf6ee;
+    --white: #ffffff;
+    --text-primary: #0a1628;
+    --text-secondary: #3a4a6a;
+    --text-muted: #7a8aaa;
+    --success: #1a6e4a;
+    --success-bg: #e8f5ee;
+    --warning: #a05a00;
+    --warning-bg: #fff3e0;
+    --danger: #8b1a1a;
+    --danger-bg: #fdecea;
+    --border: rgba(200, 151, 42, 0.2);
+    --shadow-sm: 0 2px 8px rgba(10,22,40,0.08);
+    --shadow-md: 0 4px 20px rgba(10,22,40,0.12);
+    --shadow-lg: 0 8px 40px rgba(10,22,40,0.18);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--cream);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid rgba(200,151,42,0.3);
+  }
+  .logo-group { display: flex; align-items: center; gap: 14px; }
+  .logo-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Amiri', serif;
+    font-size: 22px; color: var(--navy);
+    font-weight: 700;
+    box-shadow: 0 2px 12px rgba(200,151,42,0.4);
+  }
+  .logo-text h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--white); letter-spacing: 0.5px;
+  }
+  .logo-text p {
+    font-size: 10px; color: var(--gold-light);
+    letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 500;
+  }
+  .bismillah-header {
+    font-family: 'Amiri', serif;
+    font-size: 18px; color: var(--gold-light);
+    text-align: center; letter-spacing: 1px;
+  }
+  .badge-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .badge {
+    background: rgba(200,151,42,0.15);
+    border: 1px solid rgba(200,151,42,0.4);
+    color: var(--gold-light);
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .header-tagline {
+    text-align: center;
+    padding: 10px 32px;
+    font-size: 11px;
+    color: rgba(245,230,192,0.8);
+    letter-spacing: 1.5px;
+    font-weight: 300;
+    text-transform: uppercase;
+  }
+
+  /* ─── TABS ─── */
+  .tabs-nav {
+    background: var(--navy-mid);
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 2px solid rgba(200,151,42,0.3);
+    scrollbar-width: none;
+  }
+  .tabs-nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: 14px 22px;
+    background: none; border: none;
+    color: rgba(255,255,255,0.55);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--gold-light); }
+  .tab-btn.active {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold);
+    background: rgba(200,151,42,0.08);
+  }
+  .tab-icon { margin-right: 6px; }
+
+  /* ─── MAIN ─── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  .tab-panel { display: none; animation: fadeUp 0.35s ease; }
+  .tab-panel.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTION TITLES ─── */
+  .section-header {
+    margin-bottom: 24px;
+    display: flex; align-items: flex-start;
+    gap: 14px;
+  }
+  .section-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .section-title h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 600;
+    color: var(--navy); line-height: 1.2;
+  }
+  .section-title p {
+    font-size: 12px; color: var(--text-muted);
+    margin-top: 3px; font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px; font-weight: 600;
+    color: var(--navy); margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-title span { font-size: 16px; }
+
+  /* ─── GRID ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .col-span-2 { grid-column: span 2; }
+
+  /* ─── FORM INPUTS ─── */
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-size: 11px; font-weight: 600;
+    color: var(--text-secondary); text-transform: uppercase;
+    letter-spacing: 0.8px; margin-bottom: 6px;
+  }
+  .form-label .required { color: var(--gold); margin-left: 2px; }
+  .input-wrap { position: relative; }
+  .input-prefix, .input-suffix {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); font-size: 13px; font-weight: 500;
+    pointer-events: none;
+  }
+  .input-prefix { left: 12px; }
+  .input-suffix { right: 12px; }
+  input[type="number"], input[type="text"], select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #dde2ec;
+    border-radius: var(--radius-sm);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px; color: var(--text-primary);
+    background: var(--cream);
+    transition: border 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200,151,42,0.12);
+    background: var(--white);
+  }
+  .has-prefix input { padding-left: 28px; }
+  .has-suffix input { padding-right: 36px; }
+
+  /* ─── METRICS CARDS ─── */
+  .metric-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  }
+  .metric-card.pass::before { background: linear-gradient(90deg, #1a6e4a, #2ea878); }
+  .metric-card.fail::before { background: linear-gradient(90deg, #8b1a1a, #c44444); }
+  .metric-card.warn::before { background: linear-gradient(90deg, #a05a00, #e08020); }
+  .metric-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px;
+  }
+  .metric-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 700;
+    color: var(--navy); line-height: 1;
+  }
+  .metric-value.pass { color: var(--success); }
+  .metric-value.fail { color: var(--danger); }
+  .metric-value.warn { color: var(--warning); }
+  .metric-sub { font-size: 10px; color: var(--text-muted); margin-top: 5px; font-weight: 500; }
+  .metric-status {
+    display: inline-block; margin-top: 8px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .status-pass { background: var(--success-bg); color: var(--success); }
+  .status-fail { background: var(--danger-bg); color: var(--danger); }
+  .status-warn { background: var(--warning-bg); color: var(--warning); }
+  .status-neutral { background: #eef0f5; color: var(--text-secondary); }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    color: var(--white);
+    box-shadow: 0 4px 14px rgba(10,22,40,0.25);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--navy-light), #2a4898);
+    box-shadow: 0 6px 20px rgba(10,22,40,0.3);
+    transform: translateY(-1px);
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--navy);
+    box-shadow: 0 4px 14px rgba(200,151,42,0.3);
+  }
+  .btn-gold:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(200,151,42,0.4);
+  }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--navy);
+    color: var(--navy);
+  }
+  .btn-outline:hover { background: var(--navy); color: var(--white); }
+  .btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+
+  /* ─── VERDICT BANNER ─── */
+  .verdict-banner {
+    border-radius: var(--radius);
+    padding: 22px 28px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 16px;
+    animation: fadeUp 0.4s ease;
+  }
+  .verdict-pass {
+    background: linear-gradient(135deg, #e8f5ee, #d0efe0);
+    border: 1.5px solid #2ea878;
+  }
+  .verdict-fail {
+    background: linear-gradient(135deg, #fdecea, #faddd9);
+    border: 1.5px solid #c44444;
+  }
+  .verdict-warn {
+    background: linear-gradient(135deg, #fff8e6, #fef0cc);
+    border: 1.5px solid #e08020;
+  }
+  .verdict-icon { font-size: 36px; flex-shrink: 0; }
+  .verdict-text h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 700;
+  }
+  .verdict-text p { font-size: 12px; margin-top: 4px; opacity: 0.8; }
+
+  /* ─── SHARIAH COMPLIANCE ─── */
+  .shariah-check {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .sc-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .sc-title { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .sc-desc { font-size: 11px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
+  .sc-status {
+    margin-left: auto; flex-shrink: 0;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    align-self: center;
+  }
+
+  /* ─── TABLE ─── */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    background: var(--navy);
+    color: var(--gold-light);
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px;
+    padding: 12px 14px; text-align: left;
+  }
+  .data-table th:first-child { border-radius: 8px 0 0 0; }
+  .data-table th:last-child { border-radius: 0 8px 0 0; }
+  .data-table td { padding: 12px 14px; border-bottom: 1px solid #eef0f5; font-size: 13px; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(200,151,42,0.04); }
+  .data-table .positive { color: var(--success); font-weight: 600; }
+  .data-table .negative { color: var(--danger); font-weight: 600; }
+
+  /* ─── PROGRESS ─── */
+  .progress-wrap { background: #eef0f5; border-radius: 20px; height: 8px; overflow: hidden; margin-top: 6px; }
+  .progress-bar {
+    height: 100%; border-radius: 20px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .progress-bar.pass { background: linear-gradient(90deg, #1a6e4a, #2ea878); }
+  .progress-bar.fail { background: linear-gradient(90deg, #8b1a1a, #c44444); }
+
+  /* ─── INFO BOX ─── */
+  .info-box {
+    background: linear-gradient(135deg, #e8f0fe, #f0f4ff);
+    border: 1px solid #c0d0f0;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 12px; color: #1a3080;
+    line-height: 1.6;
+  }
+  .gold-box {
+    background: linear-gradient(135deg, #fdf5e0, #fdf0cc);
+    border: 1px solid rgba(200,151,42,0.4);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 12px; color: #7a5200;
+    line-height: 1.7;
+  }
+  .gold-box strong { color: var(--navy); }
+
+  /* ─── ARABIC AYAT ─── */
+  .ayat-box {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    color: var(--white);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    text-align: center;
+    margin-bottom: 22px;
+  }
+  .ayat-arabic {
+    font-family: 'Amiri', serif;
+    font-size: 22px; color: var(--gold-light);
+    line-height: 1.8; margin-bottom: 10px;
+  }
+  .ayat-trans { font-size: 11px; color: rgba(255,255,255,0.75); font-style: italic; line-height: 1.6; }
+  .ayat-ref { font-size: 10px; color: var(--gold-light); margin-top: 8px; font-weight: 600; letter-spacing: 1px; }
+
+  /* ─── CREED FRAMEWORK ─── */
+  .ctc-pillar {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .ctc-pillar:hover { box-shadow: var(--shadow-md); border-color: var(--gold); }
+  .ctc-num {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 700; color: var(--navy);
+    margin: 0 auto 10px;
+  }
+  .ctc-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .ctc-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .header-top { padding: 14px 16px; flex-wrap: wrap; gap: 12px; }
+    .bismillah-header { display: none; }
+    .main { padding: 18px 14px 48px; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+    .col-span-2 { grid-column: span 2; }
+    .header-tagline { padding: 8px 14px; }
+  }
+  @media (max-width: 480px) {
+    .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* ─── TOOLTIP ─── */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tt {
+    visibility: hidden; opacity: 0;
+    background: var(--navy); color: var(--white);
+    font-size: 11px; border-radius: 6px;
+    padding: 6px 10px; white-space: nowrap;
+    position: absolute; bottom: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 99; max-width: 200px; white-space: normal; text-align: center;
+    line-height: 1.4;
+  }
+  .tooltip-wrap:hover .tt { visibility: visible; opacity: 1; }
+  .tt-icon { color: var(--gold); cursor: help; font-size: 13px; margin-left: 4px; }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px; background: var(--border);
+    margin: 22px 0;
+  }
+  .divider-gold {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 24px 0;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 22px;
+    font-size: 11px;
+    margin-top: 40px;
+  }
+  .footer strong { color: var(--gold-light); }
+  .footer .footer-arabic {
+    font-family: 'Amiri', serif;
+    font-size: 16px; color: var(--gold-light); margin-bottom: 8px;
+  }
+
+  /* ─── SAMPLE / CLEAR TOOLBAR ─── */
+  .data-toolbar {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .toolbar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .toolbar-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .toolbar-divider {
+    width: 1px;
+    height: 26px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .btn-sample {
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    cursor: pointer; border: 2px solid transparent;
+    transition: all 0.2s;
+    background: var(--navy);
+    color: var(--white);
+    white-space: nowrap;
+  }
+  .btn-sample:hover {
+    background: var(--navy-light);
+    transform: translateY(-1px);
+  }
+  .btn-sample.active-sample {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold-light);
+  }
+  .btn-clear {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    cursor: pointer;
+    background: #8b1a1a;
+    color: #fff;
+    border: 2px solid #8b1a1a;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-clear:hover {
+    background: #b02020;
+    border-color: #b02020;
+    transform: translateY(-1px);
+  }
+  .btn-clear:active { transform: scale(0.97); }
+  .toolbar-status {
+    font-size: 11px;
+    color: var(--success);
+    font-style: italic;
+    font-weight: 600;
+    padding: 4px 0;
+    display: none;
+    width: 100%;
+    margin-top: 6px;
+  }
+  .toolbar-status.visible { display: block; }
+
+  /* ─── PRINT HIDE ─── */
+  @media print {
+    .tabs-nav, .btn, .btn-sample, .btn-clear, .data-toolbar, .header-top .badge-group { display: none; }
+    .tab-panel { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════ -->
+<header class="header">
+  <div class="header-top">
+    <div class="logo-group">
+      <div class="logo-icon">ب</div>
+      <div class="logo-text">
+        <h1>BMPA DSCR Analyzer</h1>
+        <p>The Balanced Middle Path Academy · Creed-to-Commerce</p>
+      </div>
+    </div>
+    <div class="bismillah-header">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    <div class="badge-group">
+      <span class="badge">Shariah Compliant</span>
+      <span class="badge">DSCR Ready</span>
+      <span class="badge">Prof. Zaid Ansari</span>
+    </div>
+  </div>
+  <div class="header-tagline">Halal Wealth · Principled Investment · Global South Excellence</div>
+  <nav class="tabs-nav" role="tablist">
+    <button class="tab-btn active" onclick="showTab('dscr')" role="tab">
+      <span class="tab-icon">📊</span>DSCR Calculator
+    </button>
+    <button class="tab-btn" onclick="showTab('shariah')" role="tab">
+      <span class="tab-icon">☪️</span>Shariah Screening
+    </button>
+    <button class="tab-btn" onclick="showTab('cashflow')" role="tab">
+      <span class="tab-icon">💰</span>Cash Flow Analysis
+    </button>
+    <button class="tab-btn" onclick="showTab('benchmarks')" role="tab">
+      <span class="tab-icon">📐</span>Investor Benchmarks
+    </button>
+    <button class="tab-btn" onclick="showTab('creed')" role="tab">
+      <span class="tab-icon">🌙</span>Creed-to-Commerce
+    </button>
+    <button class="tab-btn" onclick="showTab('report')" role="tab">
+      <span class="tab-icon">📋</span>Summary Report
+    </button>
+  </nav>
+</header>
+
+<main class="main">
+
+  <!-- ═══════ TAB 1: DSCR CALCULATOR ═══════ -->
+  <div id="tab-dscr" class="tab-panel active">
+    <div class="section-header">
+      <div class="section-icon">📊</div>
+      <div class="section-title">
+        <h2>DSCR Calculator</h2>
+        <p>Debt Service Coverage Ratio · Shariah-Compliant Property Financing Analysis</p>
+      </div>
+    </div>
+
+    <div class="ayat-box">
+      <div class="ayat-arabic">وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا</div>
+      <div class="ayat-trans">"Allah has permitted trade and forbidden riba (interest)."</div>
+      <div class="ayat-ref">Al-Baqarah 2:275</div>
+    </div>
+
+    <!-- ── DATA TOOLBAR ── -->
+    <div class="data-toolbar">
+      <div class="toolbar-row">
+        <span class="toolbar-label">📂 Load Sample:</span>
+        <button class="btn-sample" id="sampleBtn1" onclick="loadSample(1)">🏠 SFR — Pass</button>
+        <button class="btn-sample" id="sampleBtn2" onclick="loadSample(2)">🏘️ Duplex — Marginal</button>
+        <button class="btn-sample" id="sampleBtn3" onclick="loadSample(3)">🏢 Commercial — Fail</button>
+        <div class="toolbar-divider"></div>
+        <button class="btn-clear" onclick="clearAll()">🗑️ Clear All Fields</button>
+      </div>
+      <span class="toolbar-status" id="toolbarStatus"></span>
+    </div>
+
+    <div class="grid-2">
+      <!-- LEFT: INPUTS -->
+      <div>
+        <div class="card">
+          <div class="card-title"><span>🏠</span> Property Income</div>
+          <div class="form-group">
+            <label class="form-label">Gross Monthly Rental Income <span class="required">*</span></label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">$</span>
+              <input type="number" id="grossRent" value="3500" min="0" oninput="calculate()" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vacancy Rate (%)
+              <span class="tooltip-wrap"><span class="tt-icon">ⓘ</span><span class="tt">Industry standard: 5–10% for residential, 10–15% for commercial.</span></span>
+            </label>
+            <div class="input-wrap has-suffix">
+              <input type="number" id="vacancyRate" value="5" min="0" max="100" oninput="calculate()" />
+              <span class="input-suffix">%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Other Monthly Income (laundry, parking, etc.)</label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">$</span>
+              <input type="number" id="otherIncome" value="0" min="0" oninput="calculate()" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span>🏦</span> Halal Financing Structure</div>
+          <div class="info-box">
+            <strong>📌 Shariah Note:</strong> DSCR financing must use Murabaha, Diminishing Musharakah (Musharakah Mutanaqisah), or Ijarah wa Iqtina structures — not conventional interest-based mortgages.
+          </div>
+          <div class="form-group">
+            <label class="form-label">Financing Type</label>
+            <select id="financeType" onchange="calculate()">
+              <option value="musharakah">Diminishing Musharakah (Musharakah Mutanaqisah)</option>
+              <option value="murabaha">Murabaha (Cost-Plus Financing)</option>
+              <option value="ijarah">Ijarah wa Iqtina (Lease-to-Own)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Monthly Halal Financing Payment <span class="required">*</span>
+              <span class="tooltip-wrap"><span class="tt-icon">ⓘ</span><span class="tt">Your monthly Musharakah/Murabaha payment — replaces conventional P&I mortgage payment.</span></span>
+            </label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">$</span>
+              <input type="number" id="monthlyDebt" value="2100" min="0" oninput="calculate()" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Property Purchase Price</label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">$</span>
+              <input type="number" id="purchasePrice" value="350000" min="0" oninput="calculate()" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Down Payment / Equity Contribution (%)</label>
+            <div class="input-wrap has-suffix">
+              <input type="number" id="downPayment" value="25" min="0" max="100" oninput="calculate()" />
+              <span class="input-suffix">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span>🔧</span> Annual Operating Expenses</div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Property Taxes / yr</label>
+              <div class="input-wrap has-prefix">
+                <span class="input-prefix">$</span>
+                <input type="number" id="propTax" value="4200" min="0" oninput="calculate()" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Insurance / yr</label>
+              <div class="input-wrap has-prefix">
+                <span class="input-prefix">$</span>
+                <input type="number" id="insurance" value="1800" min="0" oninput="calculate()" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">HOA Fees / mo</label>
+              <div class="input-wrap has-prefix">
+                <span class="input-prefix">$</span>
+                <input type="number" id="hoa" value="0" min="0" oninput="calculate()" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Maintenance / yr</label>
+              <div class="input-wrap has-prefix">
+                <span class="input-prefix">$</span>
+                <input type="number" id="maintenance" value="2400" min="0" oninput="calculate()" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Property Mgmt / mo</label>
+              <div class="input-wrap has-prefix">
+                <span class="input-prefix">$</span>
+                <input type="number" id="propMgmt" value="315" min="0" oninput="calculate()" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Other Expenses / yr</label>
+              <div class="input-wrap has-prefix">
+                <span class="input-prefix">$</span>
+                <input type="number" id="otherExp" value="500" min="0" oninput="calculate()" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: RESULTS -->
+      <div>
+        <div id="dscrVerdict"></div>
+
+        <div class="grid-2">
+          <div class="metric-card" id="mc-dscr">
+            <div class="metric-label">DSCR Ratio</div>
+            <div class="metric-value" id="dscrValue">—</div>
+            <div class="metric-sub">Min. required: 1.25</div>
+            <span class="metric-status" id="dscrStatus">Calculate</span>
+          </div>
+          <div class="metric-card" id="mc-noi">
+            <div class="metric-label">Monthly NOI</div>
+            <div class="metric-value" id="noiValue">—</div>
+            <div class="metric-sub">Net Operating Income</div>
+            <span class="metric-status status-neutral">—</span>
+          </div>
+          <div class="metric-card" id="mc-cashflow">
+            <div class="metric-label">Monthly Cash Flow</div>
+            <div class="metric-value" id="cfValue">—</div>
+            <div class="metric-sub">After all expenses</div>
+            <span class="metric-status" id="cfStatus">—</span>
+          </div>
+          <div class="metric-card" id="mc-cap">
+            <div class="metric-label">Cap Rate</div>
+            <div class="metric-value" id="capValue">—</div>
+            <div class="metric-sub">Target: ≥ 5%</div>
+            <span class="metric-status" id="capStatus">—</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+          <div class="card-title"><span>📈</span> Financial Summary</div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Item</th><th>Monthly</th><th>Annual</th></tr>
+            </thead>
+            <tbody id="summaryTable">
+              <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:20px;">Enter values above to calculate</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span>⚖️</span> DSCR Benchmark Scale</div>
+          <div style="margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px;">
+              <span>Lender Minimum (1.0)</span>
+              <span>Target (1.25)</span>
+              <span>Excellent (1.5+)</span>
+            </div>
+            <div class="progress-wrap" style="height:12px;">
+              <div class="progress-bar" id="dscrBar" style="width:0%"></div>
+            </div>
+          </div>
+          <div id="dscrContext" class="gold-box">
+            Calculate your DSCR to see lender qualification context and Shariah-compliant financing institution benchmarks.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span>🌍</span> Key Ratios At-a-Glance</div>
+          <div id="ratioGrid" class="grid-2">
+            <div class="metric-card">
+              <div class="metric-label">Gross Rent Multiplier</div>
+              <div class="metric-value" id="grmValue">—</div>
+              <div class="metric-sub">Target: &lt; 12</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Cash-on-Cash Return</div>
+              <div class="metric-value" id="cocValue">—</div>
+              <div class="metric-sub">Target: ≥ 8%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Expense Ratio</div>
+              <div class="metric-value" id="expRatioValue">—</div>
+              <div class="metric-sub">Target: &lt; 50%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Break-Even Occ. Rate</div>
+              <div class="metric-value" id="beoValue">—</div>
+              <div class="metric-sub">Target: &lt; 85%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB 2: SHARIAH SCREENING ═══════ -->
+  <div id="tab-shariah" class="tab-panel">
+    <div class="section-header">
+      <div class="section-icon">☪️</div>
+      <div class="section-title">
+        <h2>Shariah Compliance Screening</h2>
+        <p>Five-Pillar Investment Purity Check · Ahlus Sunnah wal Jama'ah Framework</p>
+      </div>
+    </div>
+
+    <div class="ayat-box">
+      <div class="ayat-arabic">يَا أَيُّهَا الَّذِينَ آمَنُوا اتَّقُوا اللَّهَ وَذَرُوا مَا بَقِيَ مِنَ الرِّبَا إِن كُنتُم مُّؤْمِنِينَ</div>
+      <div class="ayat-trans">"O you who believe, fear Allah and give up what remains of riba, if you are true believers."</div>
+      <div class="ayat-ref">Al-Baqarah 2:278</div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-title"><span>🏘️</span> Property Use Screening</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Select all tenant/property uses that apply. A green result requires ZERO haram uses.</p>
+
+          <div id="shariahChecks">
+            <!-- Dynamically rendered -->
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="form-group">
+            <label class="form-label">Current Tenant Type</label>
+            <select id="tenantType" onchange="updateShariah()">
+              <option value="residential">Residential (Family/Individual)</option>
+              <option value="commercial_halal">Commercial – Halal Business</option>
+              <option value="commercial_mixed">Commercial – Mixed (needs review)</option>
+              <option value="commercial_haram">Commercial – Haram Business ❌</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Financing Institution</label>
+            <select id="financingInst" onchange="updateShariah()">
+              <option value="islamic_bank">Islamic Bank (AAOIFI-Certified)</option>
+              <option value="us_islamic">US Islamic Finance Provider (Guidance/LARIBA/Devon)</option>
+              <option value="conventional">Conventional Bank ❌</option>
+              <option value="private">Private Halal Partnership</option>
+            </select>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-gold" onclick="runShariahScreen()">🔍 Run Shariah Screen</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div id="shariahResultCard" class="card">
+          <div class="card-title"><span>✅</span> Screening Results</div>
+          <div id="shariahResults">
+            <div style="text-align:center;padding:30px;color:var(--text-muted);">
+              <div style="font-size:40px;margin-bottom:12px;">☪️</div>
+              <p>Complete the screening form and click<br/><strong>Run Shariah Screen</strong> to see results.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span>📚</span> Scholar Guidance</div>
+          <div class="gold-box">
+            <strong>Ibn Taymiyyah رحمه الله:</strong> "Every transaction that involves injustice (zulm) or riba is impermissible regardless of how it is structured or named."
+          </div>
+          <div class="gold-box">
+            <strong>Ibn al-Qayyim رحمه الله:</strong> "The prohibition of riba is not merely technical — it is about preventing exploitation and ensuring just exchange."
+          </div>
+          <div class="gold-box">
+            <strong>Sheikh Ibn 'Uthaymeen رحمه الله:</strong> "If a Muslim must acquire property, he should exhaust all Shariah-compliant options first. Necessity is precisely defined."
+          </div>
+          <div class="info-box">
+            <strong>AAOIFI Standard No. 12:</strong> Musharakah Mutanaqisah (Diminishing Partnership) is the preferred Shariah structure for real estate financing due to its alignment with maqasid al-Shariah (objectives of Islamic law).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB 3: CASH FLOW ANALYSIS ═══════ -->
+  <div id="tab-cashflow" class="tab-panel">
+    <div class="section-header">
+      <div class="section-icon">💰</div>
+      <div class="section-title">
+        <h2>Cash Flow Analysis</h2>
+        <p>12-Month Pro Forma · Halal Investment Returns Projection</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span>⚙️</span> Projection Assumptions</div>
+        <div class="form-group">
+          <label class="form-label">Annual Rent Growth Rate (%)</label>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="rentGrowth" value="3" min="0" max="20" oninput="buildProForma()" />
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Annual Expense Inflation (%)</label>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="expInflation" value="2.5" min="0" max="20" oninput="buildProForma()" />
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Zakat Set-Aside Rate (%)</label>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="zakatRate" value="2.5" min="0" max="10" oninput="buildProForma()" />
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sadaqah / Charitable Giving (%)</label>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="sadaqahRate" value="1" min="0" max="10" oninput="buildProForma()" />
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-gold" onclick="buildProForma()">📅 Generate Pro Forma</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>🏆</span> 5-Year Returns Summary</div>
+        <div id="fiveYearSummary">
+          <div style="text-align:center;padding:30px;color:var(--text-muted);">
+            <div style="font-size:40px;margin-bottom:12px;">📈</div>
+            <p>Generate the pro forma to see<br/>your 5-year projection.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>📅</span> 12-Month Pro Forma</div>
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="proFormaTable">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Gross Rent</th>
+              <th>Vacancy Loss</th>
+              <th>Effective Rent</th>
+              <th>Total Expenses</th>
+              <th>NOI</th>
+              <th>Debt Service</th>
+              <th>DSCR</th>
+              <th>Net Cash Flow</th>
+              <th>Zakat</th>
+            </tr>
+          </thead>
+          <tbody id="proFormaBody">
+            <tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:20px;">Click "Generate Pro Forma" to populate</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB 4: INVESTOR BENCHMARKS ═══════ -->
+  <div id="tab-benchmarks" class="tab-panel">
+    <div class="section-header">
+      <div class="section-icon">📐</div>
+      <div class="section-title">
+        <h2>Investor Benchmarks</h2>
+        <p>DSCR Lender Standards · Halal Finance KPIs · Muslim Investor Thresholds</p>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card" style="border-top:3px solid var(--gold);">
+        <div class="card-title"><span>📊</span> DSCR Thresholds</div>
+        <table class="data-table">
+          <thead><tr><th>DSCR</th><th>Rating</th></tr></thead>
+          <tbody>
+            <tr><td>Below 1.0</td><td><span class="metric-status status-fail">Negative</span></td></tr>
+            <tr><td>1.0 – 1.09</td><td><span class="metric-status status-fail">Borderline</span></td></tr>
+            <tr><td>1.10 – 1.24</td><td><span class="metric-status status-warn">Marginal</span></td></tr>
+            <tr><td>1.25 – 1.39</td><td><span class="metric-status status-pass">Lender Min</span></td></tr>
+            <tr><td>1.40 – 1.59</td><td><span class="metric-status status-pass">Good</span></td></tr>
+            <tr><td>1.60+</td><td><span class="metric-status status-pass">Excellent</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--navy);">
+        <div class="card-title"><span>🏦</span> Halal Finance Benchmarks</div>
+        <table class="data-table">
+          <thead><tr><th>Metric</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td>Min. Equity (Down)</td><td><strong>20–25%</strong></td></tr>
+            <tr><td>Max Financing Ratio</td><td><strong>75–80%</strong></td></tr>
+            <tr><td>Max Payment/Income</td><td><strong>43%</strong></td></tr>
+            <tr><td>Property Condition</td><td><strong>C1–C3 (No C4+)</strong></td></tr>
+            <tr><td>Min. Reserve (mo.)</td><td><strong>6 months</strong></td></tr>
+            <tr><td>Min. Credit Score</td><td><strong>640+</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="border-top:3px solid #1a6e4a;">
+        <div class="card-title"><span>📈</span> Return Benchmarks</div>
+        <table class="data-table">
+          <thead><tr><th>KPI</th><th>Minimum</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td>Cap Rate</td><td>4%</td><td>6–8%</td></tr>
+            <tr><td>Cash-on-Cash</td><td>6%</td><td>8–12%</td></tr>
+            <tr><td>GRM</td><td>&lt;15</td><td>&lt;10</td></tr>
+            <tr><td>Expense Ratio</td><td>&lt;55%</td><td>&lt;45%</td></tr>
+            <tr><td>Break-Even Occ.</td><td>&lt;90%</td><td>&lt;80%</td></tr>
+            <tr><td>IRR (5-yr)</td><td>8%</td><td>12–18%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider-gold"></div>
+
+    <div class="card">
+      <div class="card-title"><span>🌟</span> BMPA Halal DSCR Lender Landscape</div>
+      <div class="grid-2">
+        <div>
+          <table class="data-table">
+            <thead><tr><th>US Halal Lender</th><th>Min. DSCR</th><th>Structure</th></tr></thead>
+            <tbody>
+              <tr><td>Guidance Residential</td><td>1.25</td><td>Musharakah Mutanaqisah</td></tr>
+              <tr><td>LARIBA Finance</td><td>1.20</td><td>Murabaha / Ijarah</td></tr>
+              <tr><td>Devon Bank</td><td>1.25</td><td>Diminishing Musharakah</td></tr>
+              <tr><td>American Islamic Finance</td><td>1.20</td><td>Musharakah</td></tr>
+              <tr><td>UIF Corporation</td><td>1.25</td><td>Musharakah Mutanaqisah</td></tr>
+              <tr><td>Private Halal JV</td><td>Negotiable</td><td>Partnership/Mudarabah</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <table class="data-table">
+            <thead><tr><th>Global Islamic Banks</th><th>Region</th><th>Product</th></tr></thead>
+            <tbody>
+              <tr><td>Maybank Islamic</td><td>Malaysia/MY</td><td>MM/BBA/Ijarah</td></tr>
+              <tr><td>Kuwait Finance House</td><td>GCC</td><td>Murabaha/MM</td></tr>
+              <tr><td>Dubai Islamic Bank</td><td>UAE/GCC</td><td>Ijarah wa Iqtina</td></tr>
+              <tr><td>Al Rajhi Bank</td><td>Saudi Arabia</td><td>Murabaha</td></tr>
+              <tr><td>Abu Dhabi Islamic</td><td>UAE</td><td>MM / Ijarah</td></tr>
+              <tr><td>CIMB Islamic (MY)</td><td>Malaysia</td><td>MM / BBA</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>🇲🇾</span> Malaysian DSCR Context (Kuala Lumpur Market)</div>
+      <div class="gold-box">
+        <strong>BNM Shariah Advisory Council:</strong> Bank Negara Malaysia recognizes Musharakah Mutanaqisah as the preferred home financing instrument. Malaysian Islamic banks typically require DSCR of 1.15–1.30 for residential investment properties, with a minimum 10% equity injection. Rental income of up to 70% is recognized for debt servicing calculations (DSR in Malaysian parlance).
+      </div>
+      <div class="grid-4">
+        <div class="metric-card">
+          <div class="metric-label">BNM Max DSR</div>
+          <div class="metric-value">70%</div>
+          <div class="metric-sub">Debt Service Ratio limit</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Min. DSCR (MY)</div>
+          <div class="metric-value">1.15</div>
+          <div class="metric-sub">Investment property</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Stamp Duty (MY)</div>
+          <div class="metric-value">1–3%</div>
+          <div class="metric-sub">On property value</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">RPGT Exemption</div>
+          <div class="metric-value">6+ yrs</div>
+          <div class="metric-sub">Zero RPGT after 6 years</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB 5: CREED-TO-COMMERCE ═══════ -->
+  <div id="tab-creed" class="tab-panel">
+    <div class="section-header">
+      <div class="section-icon">🌙</div>
+      <div class="section-title">
+        <h2>Creed-to-Commerce Framework</h2>
+        <p>Prof. Zaid Ansari's Proprietary Halal Wealth-Building Methodology · BMPA</p>
+      </div>
+    </div>
+
+    <div class="ayat-box">
+      <div class="ayat-arabic">وَابْتَغِ فِيمَا آتَاكَ اللَّهُ الدَّارَ الْآخِرَةَ وَلَا تَنسَ نَصِيبَكَ مِنَ الدُّنْيَا</div>
+      <div class="ayat-trans">"Seek, in what Allah has given you, the home of the Hereafter; and do not forget your share of this world."</div>
+      <div class="ayat-ref">Al-Qasas 28:77</div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div class="card" style="background:linear-gradient(135deg,var(--navy),var(--navy-light));color:white;">
+        <div class="card-title" style="color:var(--gold-light);border-color:rgba(200,151,42,0.3);">
+          <span>🌙</span> About Prof. Zaid Ansari
+        </div>
+        <p style="font-size:12px;line-height:1.8;color:rgba(255,255,255,0.85);">
+          Founder & Principal Consultant, <strong style="color:var(--gold-light)">The Balanced Middle Path Academy, LLC (BMPA)</strong>. Over 30 years of international higher education experience across the US, UAE, Egypt, and Malaysia. Published author of <em style="color:var(--gold-pale)">"Cracked Mirrors: Emmett Till to Barack Obama and My Path to Authentic Islam."</em>
+        </p>
+        <div class="divider" style="border-color:rgba(200,151,42,0.3);"></div>
+        <p style="font-size:11px;line-height:1.8;color:rgba(255,255,255,0.7);">
+          Methodology grounded in <strong style="color:var(--gold-light)">Ahlus Sunnah wal Jama'ah</strong> with scholarly citations from Ibn Taymiyyah, Ibn al-Qayyim, Ibn al-'Uthaymeen, Ibn Baz رحمهم الله, and contemporary Islamic finance authorities.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>⚖️</span> The Balanced Middle Path in Wealth</div>
+        <div class="gold-box">
+          The Prophet ﷺ said: <em>"The best of affairs is the middle course."</em> This principle applies directly to wealth-building: neither asceticism that ignores legitimate halal commerce, nor materialism that forgets the Akhirah.
+        </div>
+        <div class="info-box">
+          <strong>BMPA Real Estate Principle:</strong> Investment in real estate represents one of the most ancient and stable forms of halal wealth preservation — aligned with the Prophet's ﷺ approval of trade, land use, and productive economic activity.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>🏛️</span> The Seven Pillars of Creed-to-Commerce Real Estate</div>
+      <div class="grid-3" style="gap:14px;">
+        <div class="ctc-pillar">
+          <div class="ctc-num">١</div>
+          <div class="ctc-title">Aqeedah Foundation (Creed)</div>
+          <div class="ctc-desc">Every investment decision begins with tawheed consciousness. Wealth is an amanah (trust) from Allah — not owned, but managed. DSCR analysis must start with niyyah (intention).</div>
+        </div>
+        <div class="ctc-pillar">
+          <div class="ctc-num">٢</div>
+          <div class="ctc-title">Halal Sourcing (Tahqiq)</div>
+          <div class="ctc-desc">Property income, tenant type, financing structure, and business use must pass a five-point Shariah screen before any financial calculation begins.</div>
+        </div>
+        <div class="ctc-pillar">
+          <div class="ctc-num">٣</div>
+          <div class="ctc-title">Due Diligence (Tathabbut)</div>
+          <div class="ctc-desc">Thorough analysis of DSCR, Cap Rate, Cash-on-Cash, and GRM. No speculation (gharar) — only evidence-based investment decisions grounded in real data.</div>
+        </div>
+        <div class="ctc-pillar">
+          <div class="ctc-num">٤</div>
+          <div class="ctc-title">Risk Management (Mizan)</div>
+          <div class="ctc-desc">Maintain 6-month cash reserves. Maintain DSCR ≥ 1.25. Apply the BMPA 1% Rule. Diversify across markets. Never over-leverage. Balance (mizan) is a Quranic command.</div>
+        </div>
+        <div class="ctc-pillar">
+          <div class="ctc-num">٥</div>
+          <div class="ctc-title">Wealth Purification (Zakat/Sadaqah)</div>
+          <div class="ctc-desc">2.5% Zakat set-aside on investment income meeting nisab threshold. Voluntary sadaqah above Zakat is encouraged as a barakah multiplier in the wealth-building journey.</div>
+        </div>
+        <div class="ctc-pillar">
+          <div class="ctc-num">٦</div>
+          <div class="ctc-title">Community Impact (Maslaha)</div>
+          <div class="ctc-desc">Prioritize investments that create community benefit: affordable housing, Muslim-owned businesses, Global South market development. Profit with purpose.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>📋</span> Creed-to-Commerce DSCR Decision Matrix</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Criterion</th>
+            <th>BMPA Standard</th>
+            <th>Shariah Basis</th>
+            <th>Conventional Equivalent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Financing Structure</strong></td>
+            <td>Musharakah / Murabaha / Ijarah only</td>
+            <td>Prohibition of Riba (2:275)</td>
+            <td>Conventional Mortgage</td>
+          </tr>
+          <tr>
+            <td><strong>Min. DSCR</strong></td>
+            <td>1.25 (BMPA recommends 1.35)</td>
+            <td>Mizan (Balance) — Al-Rahman 55:9</td>
+            <td>1.25 standard</td>
+          </tr>
+          <tr>
+            <td><strong>Down Payment</strong></td>
+            <td>25%+ (reduces riba exposure)</td>
+            <td>Minimize debt obligations</td>
+            <td>20% minimum</td>
+          </tr>
+          <tr>
+            <td><strong>Tenant Screening</strong></td>
+            <td>No haram business tenants</td>
+            <td>La darar wa la dirar (no harm)</td>
+            <td>Standard credit check only</td>
+          </tr>
+          <tr>
+            <td><strong>Reserve Fund</strong></td>
+            <td>6 months expenses (not invested in riba)</td>
+            <td>Precaution (ihtiyat)</td>
+            <td>2–3 months typical</td>
+          </tr>
+          <tr>
+            <td><strong>Profit Distribution</strong></td>
+            <td>Zakat 2.5% + Sadaqah</td>
+            <td>Purification of wealth (9:103)</td>
+            <td>No religious obligation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════ TAB 6: SUMMARY REPORT ═══════ -->
+  <div id="tab-report" class="tab-panel">
+    <div class="section-header">
+      <div class="section-icon">📋</div>
+      <div class="section-title">
+        <h2>Investment Summary Report</h2>
+        <p>Full Analysis · BMPA Creed-to-Commerce Certification</p>
+      </div>
+    </div>
+
+    <div id="reportContent">
+      <div style="text-align:center;padding:50px;color:var(--text-muted);">
+        <div style="font-size:60px;margin-bottom:16px;">📊</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:8px;">No Analysis Yet</h3>
+        <p>Complete the DSCR Calculator to generate your full investment report.</p>
+        <button class="btn btn-gold" style="margin-top:16px;" onclick="showTab('dscr')">Go to DSCR Calculator</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-arabic">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+  <p>
+    <strong>BMPA DSCR Analyzer</strong> · The Balanced Middle Path Academy, LLC ·
+    <strong>Creed-to-Commerce™ Framework</strong> · Prof. Zaid Ansari (ABD)<br/>
+    Kuala Lumpur, Malaysia · Shariah-Compliant Real Estate Investment Platform<br/>
+    <em style="font-size:10px;">For educational purposes. Consult a qualified Islamic finance scholar for binding rulings. جزاكم الله خيراً</em>
+  </p>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════
+   SHARIAH CHECKS DATA
+═══════════════════════════════════════════════ */
+const shariahChecklist = [
+  { id: 'noAlcohol', label: 'No Alcohol-Related Business', desc: 'No liquor store, bar, brewery, or alcohol distribution tenants', critical: true },
+  { id: 'noPork', label: 'No Pork Products Business', desc: 'No pork processing, distribution, or restaurant primarily serving pork', critical: true },
+  { id: 'noGambling', label: 'No Gambling / Casino', desc: 'No casino, sports betting, online gambling platform, or lottery operations', critical: true },
+  { id: 'noInterest', label: 'No Riba-Based Financing', desc: 'Property financed through Halal Islamic finance only — no conventional interest mortgage', critical: true },
+  { id: 'noAdult', label: 'No Adult / Immoral Business', desc: 'No adult entertainment, nightclub, or morally objectionable business use', critical: true },
+  { id: 'noWeapons', label: 'No Weapons / Defense Industry', desc: 'No weapons manufacturing, military contractor, or arms dealer tenant', critical: false },
+  { id: 'propertyTitle', label: 'Clear Halal Property Title', desc: 'No encumbrances, disputed ownership, or fraudulent title issues (gharar in title)', critical: false },
+  { id: 'communityBenefit', label: 'Community / Social Benefit', desc: 'Property use benefits the community — housing, education, halal commerce', critical: false },
+];
+
+/* ═══════════════════════════════════════════════
+   RENDER SHARIAH CHECKLIST
+═══════════════════════════════════════════════ */
+function renderShariahChecks() {
+  const container = document.getElementById('shariahChecks');
+  container.innerHTML = shariahChecklist.map(item => `
+    <div class="shariah-check">
+      <input type="checkbox" id="${item.id}" onchange="updateShariah()"
+        style="width:16px;height:16px;accent-color:var(--gold);flex-shrink:0;margin-top:2px;" />
+      <div style="flex:1">
+        <div class="sc-title">${item.label} ${item.critical ? '<span style="color:var(--danger);font-size:10px;">(Critical)</span>' : ''}</div>
+        <div class="sc-desc">${item.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateShariah() {}
+
+function runShariahScreen() {
+  const results = shariahChecklist.map(item => ({
+    ...item,
+    checked: document.getElementById(item.id)?.checked || false
+  }));
+  const tenantType = document.getElementById('tenantType').value;
+  const financingInst = document.getElementById('financingInst').value;
+
+  const criticalFails = results.filter(r => r.critical && r.checked);
+  const warnings = results.filter(r => !r.critical && r.checked);
+  const haramFinancing = financingInst === 'conventional';
+  const haramTenant = tenantType === 'commercial_haram';
+
+  const totalIssues = criticalFails.length + (haramFinancing ? 1 : 0) + (haramTenant ? 1 : 0);
+  const passed = totalIssues === 0;
+  const marginal = totalIssues === 0 && warnings.length > 0;
+
+  const html = `
+    <div class="verdict-banner ${passed && !marginal ? 'verdict-pass' : totalIssues > 0 ? 'verdict-fail' : 'verdict-warn'}" style="margin-bottom:16px;">
+      <div class="verdict-icon">${totalIssues === 0 ? '✅' : '❌'}</div>
+      <div class="verdict-text">
+        <h3 style="color:${totalIssues === 0 ? 'var(--success)' : 'var(--danger)'}">
+          ${totalIssues === 0 ? 'Shariah Compliant ✓' : `${totalIssues} Compliance Issue(s) Found`}
+        </h3>
+        <p>${totalIssues === 0 ? 'This investment passes all critical Shariah screening criteria.' : 'Review and resolve the flagged items before proceeding with this investment.'}</p>
+      </div>
+    </div>
+    ${results.map(r => `
+      <div class="shariah-check">
+        <span class="sc-icon">${r.checked ? (r.critical ? '❌' : '⚠️') : '✅'}</span>
+        <div style="flex:1">
+          <div class="sc-title">${r.label}</div>
+          <div class="sc-desc">${r.desc}</div>
+        </div>
+        <span class="sc-status ${r.checked ? (r.critical ? 'status-fail' : 'status-warn') : 'status-pass'}">
+          ${r.checked ? (r.critical ? 'FAIL' : 'FLAG') : 'PASS'}
+        </span>
+      </div>
+    `).join('')}
+    <div class="shariah-check" style="margin-top:8px;">
+      <span class="sc-icon">${haramFinancing ? '❌' : '✅'}</span>
+      <div style="flex:1">
+        <div class="sc-title">Financing Structure</div>
+        <div class="sc-desc">${haramFinancing ? 'CONVENTIONAL interest-based financing detected — HARAM' : 'Halal Islamic financing structure confirmed'}</div>
+      </div>
+      <span class="sc-status ${haramFinancing ? 'status-fail' : 'status-pass'}">${haramFinancing ? 'FAIL' : 'PASS'}</span>
+    </div>
+    <div class="shariah-check">
+      <span class="sc-icon">${haramTenant ? '❌' : '✅'}</span>
+      <div style="flex:1">
+        <div class="sc-title">Tenant Type</div>
+        <div class="sc-desc">${haramTenant ? 'Commercial tenant operates a Haram business — not permissible' : 'Tenant classification is Shariah-acceptable'}</div>
+      </div>
+      <span class="sc-status ${haramTenant ? 'status-fail' : 'status-pass'}">${haramTenant ? 'FAIL' : 'PASS'}</span>
+    </div>
+  `;
+  document.getElementById('shariahResults').innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════
+   DSCR CALCULATOR
+═══════════════════════════════════════════════ */
+function getVal(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+
+function calculate() {
+  const grossRent = getVal('grossRent');
+  const vacancyPct = getVal('vacancyRate') / 100;
+  const otherIncome = getVal('otherIncome');
+  const monthlyDebt = getVal('monthlyDebt');
+  const purchasePrice = getVal('purchasePrice');
+  const downPct = getVal('downPayment') / 100;
+  const propTax = getVal('propTax') / 12;
+  const insurance = getVal('insurance') / 12;
+  const hoa = getVal('hoa');
+  const maintenance = getVal('maintenance') / 12;
+  const propMgmt = getVal('propMgmt');
+  const otherExp = getVal('otherExp') / 12;
+
+  const effectiveRent = grossRent * (1 - vacancyPct) + otherIncome;
+  const totalExpenses = propTax + insurance + hoa + maintenance + propMgmt + otherExp;
+  const noi = effectiveRent - totalExpenses;
+  const cashFlow = noi - monthlyDebt;
+  const dscr = monthlyDebt > 0 ? noi / monthlyDebt : 0;
+  const annualNOI = noi * 12;
+  const capRate = purchasePrice > 0 ? (annualNOI / purchasePrice) * 100 : 0;
+  const equityInvested = purchasePrice * downPct;
+  const annualCashFlow = cashFlow * 12;
+  const coc = equityInvested > 0 ? (annualCashFlow / equityInvested) * 100 : 0;
+  const grm = grossRent > 0 ? purchasePrice / (grossRent * 12) : 0;
+  const expRatio = effectiveRent > 0 ? (totalExpenses / effectiveRent) * 100 : 0;
+  const beo = effectiveRent > 0 ? ((totalExpenses + monthlyDebt) / grossRent) * 100 : 0;
+
+  // DSCR Classification
+  let dscrClass, dscrLabel, cardClass;
+  if (dscr >= 1.6) { dscrClass = 'pass'; dscrLabel = '✅ Excellent'; cardClass = 'pass'; }
+  else if (dscr >= 1.4) { dscrClass = 'pass'; dscrLabel = '✅ Good'; cardClass = 'pass'; }
+  else if (dscr >= 1.25) { dscrClass = 'pass'; dscrLabel = '✅ Lender Minimum Met'; cardClass = 'pass'; }
+  else if (dscr >= 1.1) { dscrClass = 'warn'; dscrLabel = '⚠️ Marginal'; cardClass = 'warn'; }
+  else if (dscr >= 1.0) { dscrClass = 'warn'; dscrLabel = '⚠️ Borderline'; cardClass = 'warn'; }
+  else { dscrClass = 'fail'; dscrLabel = '❌ Below Minimum'; cardClass = 'fail'; }
+
+  // Update metric cards
+  document.getElementById('dscrValue').textContent = dscr.toFixed(2);
+  document.getElementById('dscrValue').className = `metric-value ${dscrClass}`;
+  document.getElementById('dscrStatus').textContent = dscrLabel;
+  document.getElementById('dscrStatus').className = `metric-status status-${dscrClass}`;
+  document.getElementById('mc-dscr').className = `metric-card ${cardClass}`;
+
+  const fmt = (n) => '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:0,maximumFractionDigits:0});
+  document.getElementById('noiValue').textContent = fmt(noi);
+  document.getElementById('cfValue').textContent = (cashFlow < 0 ? '-' : '') + fmt(cashFlow);
+  document.getElementById('cfValue').className = `metric-value ${cashFlow >= 0 ? 'pass' : 'fail'}`;
+
+  const cfClass = cashFlow >= 300 ? 'pass' : cashFlow >= 0 ? 'warn' : 'fail';
+  const cfLabel = cashFlow >= 300 ? '✅ Strong' : cashFlow >= 0 ? '⚠️ Marginal' : '❌ Negative';
+  document.getElementById('cfStatus').textContent = cfLabel;
+  document.getElementById('cfStatus').className = `metric-status status-${cfClass}`;
+  document.getElementById('mc-cashflow').className = `metric-card ${cfClass}`;
+
+  const capClass = capRate >= 6 ? 'pass' : capRate >= 4 ? 'warn' : 'fail';
+  document.getElementById('capValue').textContent = capRate.toFixed(2) + '%';
+  document.getElementById('capValue').className = `metric-value ${capClass}`;
+  document.getElementById('capStatus').textContent = capRate >= 6 ? '✅ Target Met' : capRate >= 4 ? '⚠️ Acceptable' : '❌ Below Target';
+  document.getElementById('capStatus').className = `metric-status status-${capClass}`;
+  document.getElementById('mc-cap').className = `metric-card ${capClass}`;
+
+  // Other ratios
+  document.getElementById('grmValue').textContent = grm > 0 ? grm.toFixed(1) : '—';
+  document.getElementById('grmValue').className = `metric-value ${grm < 12 && grm > 0 ? 'pass' : grm < 15 && grm > 0 ? 'warn' : 'fail'}`;
+  document.getElementById('cocValue').textContent = coc.toFixed(1) + '%';
+  document.getElementById('cocValue').className = `metric-value ${coc >= 8 ? 'pass' : coc >= 6 ? 'warn' : 'fail'}`;
+  document.getElementById('expRatioValue').textContent = expRatio.toFixed(1) + '%';
+  document.getElementById('expRatioValue').className = `metric-value ${expRatio < 45 ? 'pass' : expRatio < 55 ? 'warn' : 'fail'}`;
+  document.getElementById('beoValue').textContent = beo.toFixed(1) + '%';
+  document.getElementById('beoValue').className = `metric-value ${beo < 80 ? 'pass' : beo < 90 ? 'warn' : 'fail'}`;
+
+  // DSCR Progress Bar
+  const barPct = Math.min((dscr / 2.0) * 100, 100);
+  const barEl = document.getElementById('dscrBar');
+  barEl.style.width = barPct + '%';
+  barEl.className = `progress-bar ${cardClass}`;
+
+  // DSCR Context
+  let ctxText = '';
+  if (dscr >= 1.25) {
+    ctxText = `✅ <strong>BMPA Qualification: APPROVED</strong> — Your DSCR of <strong>${dscr.toFixed(2)}</strong> meets or exceeds the 1.25 threshold required by most Shariah-compliant DSCR lenders including Guidance Residential and UIF Corporation. ${dscr >= 1.35 ? 'You also meet BMPA\'s recommended 1.35 target, giving you strong lender negotiation leverage.' : 'Consider increasing to 1.35 to meet BMPA\'s preferred threshold.'}`;
+  } else if (dscr >= 1.1) {
+    ctxText = `⚠️ <strong>Marginal — Needs Improvement:</strong> DSCR of <strong>${dscr.toFixed(2)}</strong> is below most Shariah lenders' minimum of 1.25. Options: increase rent, reduce expenses, increase down payment, or negotiate better financing terms.`;
+  } else if (dscr > 0) {
+    ctxText = `❌ <strong>BMPA Verdict: DO NOT PROCEED</strong> — DSCR of <strong>${dscr.toFixed(2)}</strong> indicates the property cannot service its financing obligations from income alone. This creates financial gharar (uncertainty/risk) and goes against BMPA's balanced investment principles.`;
+  }
+  if (ctxText) document.getElementById('dscrContext').innerHTML = ctxText;
+
+  // Summary table
+  const rows = [
+    ['Gross Monthly Rent', fmt(grossRent), fmt(grossRent * 12)],
+    ['Vacancy Loss', '-' + fmt(grossRent * vacancyPct), '-' + fmt(grossRent * vacancyPct * 12)],
+    ['Effective Gross Income', fmt(effectiveRent), fmt(effectiveRent * 12)],
+    ['Total Operating Expenses', '-' + fmt(totalExpenses), '-' + fmt(totalExpenses * 12)],
+    ['Net Operating Income (NOI)', fmt(noi), fmt(noi * 12)],
+    ['Halal Financing Payment', '-' + fmt(monthlyDebt), '-' + fmt(monthlyDebt * 12)],
+    ['Net Cash Flow', (cashFlow < 0 ? '-' : '') + fmt(cashFlow), (annualCashFlow < 0 ? '-' : '') + fmt(annualCashFlow)],
+    ['Zakat (2.5% of NOI)', fmt(noi * 0.025), fmt(noi * 12 * 0.025)],
+    ['Post-Zakat Net Cash Flow', fmt(cashFlow - noi * 0.025), fmt(annualCashFlow - annualNOI * 0.025)],
+  ];
+  document.getElementById('summaryTable').innerHTML = rows.map((r, i) => {
+    const isTotal = [4, 6, 8].includes(i);
+    const val3 = r[2];
+    const isNeg = val3.startsWith('-');
+    return `<tr style="${isTotal ? 'font-weight:700;background:rgba(200,151,42,0.06)' : ''}">
+      <td>${r[0]}</td>
+      <td class="${isNeg ? 'negative' : ''}">${r[1]}</td>
+      <td class="${isNeg ? 'negative' : isTotal ? 'positive' : ''}">${r[2]}</td>
+    </tr>`;
+  }).join('');
+
+  // Verdict banner
+  const verdictClass = dscr >= 1.25 ? 'pass' : dscr >= 1.1 ? 'warn' : 'fail';
+  const verdictIcon = dscr >= 1.25 ? '✅' : dscr >= 1.1 ? '⚠️' : '❌';
+  const verdictTitle = dscr >= 1.25 ? 'Investment Qualifies — Bismillah Proceed with Due Diligence' : dscr >= 1.1 ? 'Marginal — Improvements Needed Before Proceeding' : 'Does Not Qualify — DSCR Below Acceptable Threshold';
+  document.getElementById('dscrVerdict').innerHTML = `
+    <div class="verdict-banner verdict-${verdictClass}">
+      <div class="verdict-icon">${verdictIcon}</div>
+      <div class="verdict-text">
+        <h3 style="color:var(--${verdictClass === 'pass' ? 'success' : verdictClass === 'warn' ? 'warning' : 'danger'})">${verdictTitle}</h3>
+        <p>DSCR: ${dscr.toFixed(3)} · Monthly NOI: ${fmt(noi)} · Cash Flow: ${fmt(cashFlow)}/mo · Cap Rate: ${capRate.toFixed(2)}%</p>
+      </div>
+    </div>
+  `;
+
+  updateReport(dscr, noi, cashFlow, capRate, coc, grm, expRatio, beo, effectiveRent, totalExpenses, monthlyDebt);
+}
+
+/* ═══════════════════════════════════════════════
+   PRO FORMA
+═══════════════════════════════════════════════ */
+function buildProForma() {
+  const grossRent = getVal('grossRent');
+  const vacancyPct = getVal('vacancyRate') / 100;
+  const monthlyDebt = getVal('monthlyDebt');
+  const propTax = getVal('propTax') / 12;
+  const insurance = getVal('insurance') / 12;
+  const hoa = getVal('hoa');
+  const maintenance = getVal('maintenance') / 12;
+  const propMgmt = getVal('propMgmt');
+  const otherExp = getVal('otherExp') / 12;
+  const rentGrowth = getVal('rentGrowth') / 100 / 12;
+  const expInflation = getVal('expInflation') / 100 / 12;
+  const zakatRate = getVal('zakatRate') / 100;
+
+  let totalNCF = 0, totalZakat = 0, totalNOI = 0;
+  const rows = [];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  for (let m = 0; m < 12; m++) {
+    const adjRent = grossRent * Math.pow(1 + rentGrowth, m);
+    const vacancyLoss = adjRent * vacancyPct;
+    const effRent = adjRent - vacancyLoss;
+    const expFactor = Math.pow(1 + expInflation, m);
+    const totalExp = (propTax + insurance + hoa + maintenance + propMgmt + otherExp) * expFactor;
+    const noi = effRent - totalExp;
+    const dscr = monthlyDebt > 0 ? noi / monthlyDebt : 0;
+    const ncf = noi - monthlyDebt;
+    const zakat = Math.max(0, noi * zakatRate);
+    totalNCF += ncf; totalZakat += zakat; totalNOI += noi;
+    rows.push({ month: months[m], adjRent, vacancyLoss, effRent, totalExp, noi, monthlyDebt, dscr, ncf, zakat });
+  }
+
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  document.getElementById('proFormaBody').innerHTML = rows.map(r => `
+    <tr>
+      <td><strong>${r.month}</strong></td>
+      <td>${fmt(r.adjRent)}</td>
+      <td class="negative">-${fmt(r.vacancyLoss)}</td>
+      <td>${fmt(r.effRent)}</td>
+      <td class="negative">-${fmt(r.totalExp)}</td>
+      <td class="${r.noi >= 0 ? 'positive' : 'negative'}">${fmt(r.noi)}</td>
+      <td class="negative">-${fmt(r.monthlyDebt)}</td>
+      <td class="${r.dscr >= 1.25 ? 'positive' : 'negative'}">${r.dscr.toFixed(2)}</td>
+      <td class="${r.ncf >= 0 ? 'positive' : 'negative'}">${r.ncf < 0 ? '-' : ''}${fmt(Math.abs(r.ncf))}</td>
+      <td style="color:var(--gold);">${fmt(r.zakat)}</td>
+    </tr>
+  `).join('') + `
+    <tr style="background:var(--navy);color:white;font-weight:700;">
+      <td>TOTAL</td>
+      <td colspan="4"></td>
+      <td style="color:var(--gold-light);">${fmt(totalNOI)}</td>
+      <td></td>
+      <td>—</td>
+      <td style="color:${totalNCF >= 0 ? '#7affa2' : '#ff7a7a'}">${totalNCF < 0 ? '-' : ''}${fmt(Math.abs(totalNCF))}</td>
+      <td style="color:var(--gold-light);">${fmt(totalZakat)}</td>
+    </tr>
+  `;
+
+  // 5-year summary
+  const grossRentGrowth = getVal('rentGrowth') / 100;
+  const expGrowth = getVal('expInflation') / 100;
+  const fmtK = n => (n >= 1000 ? '$' + (n/1000).toFixed(1) + 'k' : '$' + Math.round(n).toLocaleString());
+  let html5 = '';
+  for (let yr = 1; yr <= 5; yr++) {
+    const annualRent = grossRent * 12 * Math.pow(1 + grossRentGrowth, yr - 1) * (1 - vacancyPct);
+    const baseExp = (propTax + insurance + hoa * 12 + maintenance + propMgmt * 12 + otherExp * 12);
+    const annualExp = baseExp * Math.pow(1 + expGrowth, yr - 1);
+    const annualNOI = annualRent - annualExp;
+    const annualDebt = monthlyDebt * 12;
+    const annualNCF = annualNOI - annualDebt;
+    const annualDSCR = annualDebt > 0 ? annualNOI / annualDebt : 0;
+    html5 += `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <span style="font-weight:700;color:var(--navy);">Year ${yr}</span>
+        <span style="font-size:11px;color:var(--text-muted);">NOI: <strong>${fmtK(annualNOI)}</strong></span>
+        <span style="font-size:11px;color:var(--text-muted);">NCF: <strong class="${annualNCF >= 0 ? '' : 'negative'}">${fmtK(annualNCF)}</strong></span>
+        <span style="font-size:11px;">DSCR: <strong class="${annualDSCR >= 1.25 ? 'positive' : 'negative'}">${annualDSCR.toFixed(2)}</strong></span>
+      </div>
+    `;
+  }
+  document.getElementById('fiveYearSummary').innerHTML = html5;
+}
+
+/* ═══════════════════════════════════════════════
+   REPORT GENERATOR
+═══════════════════════════════════════════════ */
+function updateReport(dscr, noi, cashFlow, capRate, coc, grm, expRatio, beo, effRent, totalExp, debt) {
+  const fmt = n => '$' + Math.round(Math.abs(n)).toLocaleString();
+  const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const passAll = dscr >= 1.25 && cashFlow > 0 && capRate >= 5;
+  const verdictClass = passAll ? 'pass' : dscr >= 1.1 ? 'warn' : 'fail';
+
+  const html = `
+    <div class="card" style="background:linear-gradient(135deg,var(--navy),var(--navy-light));color:white;margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-family:'Amiri',serif;font-size:20px;color:var(--gold-light);margin-bottom:6px;">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:white;">BMPA Investment Analysis Report</h2>
+          <p style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;">The Balanced Middle Path Academy · Creed-to-Commerce™ · Prof. Zaid Ansari (ABD)</p>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px;color:var(--gold-light);">Generated: ${now}</div>
+          <div class="metric-status status-${verdictClass}" style="margin-top:8px;font-size:12px;padding:6px 14px;">
+            ${passAll ? '✅ INVESTMENT QUALIFIED' : dscr >= 1.1 ? '⚠️ MARGINAL' : '❌ NOT QUALIFIED'}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      <div class="metric-card ${dscr >= 1.25 ? 'pass' : dscr >= 1.1 ? 'warn' : 'fail'}">
+        <div class="metric-label">DSCR</div>
+        <div class="metric-value ${dscr >= 1.25 ? 'pass' : dscr >= 1.1 ? 'warn' : 'fail'}">${dscr.toFixed(2)}</div>
+        <div class="metric-sub">Min: 1.25</div>
+      </div>
+      <div class="metric-card ${capRate >= 6 ? 'pass' : capRate >= 4 ? 'warn' : 'fail'}">
+        <div class="metric-label">Cap Rate</div>
+        <div class="metric-value ${capRate >= 6 ? 'pass' : capRate >= 4 ? 'warn' : 'fail'}">${capRate.toFixed(2)}%</div>
+        <div class="metric-sub">Target: ≥6%</div>
+      </div>
+      <div class="metric-card ${coc >= 8 ? 'pass' : coc >= 6 ? 'warn' : 'fail'}">
+        <div class="metric-label">Cash-on-Cash</div>
+        <div class="metric-value ${coc >= 8 ? 'pass' : coc >= 6 ? 'warn' : 'fail'}">${coc.toFixed(1)}%</div>
+        <div class="metric-sub">Target: ≥8%</div>
+      </div>
+      <div class="metric-card ${cashFlow >= 300 ? 'pass' : cashFlow >= 0 ? 'warn' : 'fail'}">
+        <div class="metric-label">Monthly NCF</div>
+        <div class="metric-value ${cashFlow >= 300 ? 'pass' : cashFlow >= 0 ? 'warn' : 'fail'}">${cashFlow < 0 ? '-' : ''}${fmt(cashFlow)}</div>
+        <div class="metric-sub">After Financing</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>📊</span> BMPA Creed-to-Commerce Scorecard</div>
+      ${[
+        { label: 'DSCR ≥ 1.25', pass: dscr >= 1.25, val: dscr.toFixed(2), note: 'Halal lender minimum' },
+        { label: 'Positive Monthly Cash Flow', pass: cashFlow > 0, val: fmt(cashFlow) + '/mo', note: 'Cover all expenses' },
+        { label: 'Cap Rate ≥ 5%', pass: capRate >= 5, val: capRate.toFixed(2) + '%', note: 'Minimum return on value' },
+        { label: 'Cash-on-Cash ≥ 6%', pass: coc >= 6, val: coc.toFixed(1) + '%', note: 'Return on equity' },
+        { label: 'GRM < 15', pass: grm > 0 && grm < 15, val: grm.toFixed(1), note: 'Price/rent ratio' },
+        { label: 'Expense Ratio < 55%', pass: expRatio < 55, val: expRatio.toFixed(1) + '%', note: 'Operating efficiency' },
+        { label: 'Break-Even Occ < 90%', pass: beo < 90, val: beo.toFixed(1) + '%', note: 'Vacancy protection' },
+      ].map(item => `
+        <div class="shariah-check">
+          <span class="sc-icon">${item.pass ? '✅' : '❌'}</span>
+          <div style="flex:1">
+            <div class="sc-title">${item.label}</div>
+            <div class="sc-desc">${item.note}</div>
+          </div>
+          <span class="sc-status ${item.pass ? 'status-pass' : 'status-fail'}">${item.val}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="gold-box" style="margin-top:0;">
+      <strong>Prof. Ansari's Advisory Note:</strong> An investment that passes DSCR thresholds but fails Shariah screening is <em>not a halal investment</em>. Always run the Shariah Screening tab first. Barakah in wealth comes from purity of source, not merely efficiency of return. <em>وَاللَّهُ يَرْزُقُ مَن يَشَاءُ بِغَيْرِ حِسَابٍ</em> — "Allah provides for whom He wills without account." (Al-Baqarah 2:212)
+    </div>
+  `;
+  document.getElementById('reportContent').innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════
+   TAB NAVIGATION
+═══════════════════════════════════════════════ */
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════
+   SAMPLE DATA SETS
+═══════════════════════════════════════════════ */
+const SAMPLES = {
+  1: {
+    label: 'Sample 1 — SFR Pass',
+    desc: 'Loaded: Single-Family Rental · Houston, TX · Strong DSCR ✅',
+    grossRent: 2800,
+    vacancyRate: 5,
+    otherIncome: 0,
+    financeType: 'musharakah',
+    monthlyDebt: 1480,
+    purchasePrice: 280000,
+    downPayment: 25,
+    propTax: 5600,
+    insurance: 1440,
+    hoa: 0,
+    maintenance: 2800,
+    propMgmt: 252,
+    otherExp: 600,
+  },
+  2: {
+    label: 'Sample 2 — Duplex Marginal',
+    desc: 'Loaded: Duplex · Detroit, MI · Marginal DSCR ⚠️',
+    grossRent: 2200,
+    vacancyRate: 8,
+    otherIncome: 60,
+    financeType: 'murabaha',
+    monthlyDebt: 1550,
+    purchasePrice: 210000,
+    downPayment: 20,
+    propTax: 3600,
+    insurance: 1200,
+    hoa: 0,
+    maintenance: 2100,
+    propMgmt: 198,
+    otherExp: 400,
+  },
+  3: {
+    label: 'Sample 3 — Commercial Fail',
+    desc: 'Loaded: Small Commercial Unit · Newark, NJ · Failing DSCR ❌',
+    grossRent: 3200,
+    vacancyRate: 12,
+    otherIncome: 0,
+    financeType: 'ijarah',
+    monthlyDebt: 2900,
+    purchasePrice: 420000,
+    downPayment: 20,
+    propTax: 9200,
+    insurance: 2400,
+    hoa: 250,
+    maintenance: 4200,
+    propMgmt: 288,
+    otherExp: 1200,
+  },
+};
+
+function setField(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function loadSample(num) {
+  const s = SAMPLES[num];
+  if (!s) return;
+
+  setField('grossRent', s.grossRent);
+  setField('vacancyRate', s.vacancyRate);
+  setField('otherIncome', s.otherIncome);
+  setField('monthlyDebt', s.monthlyDebt);
+  setField('purchasePrice', s.purchasePrice);
+  setField('downPayment', s.downPayment);
+  setField('propTax', s.propTax);
+  setField('insurance', s.insurance);
+  setField('hoa', s.hoa);
+  setField('maintenance', s.maintenance);
+  setField('propMgmt', s.propMgmt);
+  setField('otherExp', s.otherExp);
+  const ftEl = document.getElementById('financeType');
+  if (ftEl) ftEl.value = s.financeType;
+
+  // Update button states
+  [1, 2, 3].forEach(n => {
+    const btn = document.getElementById('sampleBtn' + n);
+    if (btn) btn.classList.toggle('active-sample', n === num);
+  });
+
+  // Show status message
+  const statusEl = document.getElementById('toolbarStatus');
+  if (statusEl) {
+    statusEl.textContent = s.desc;
+    statusEl.classList.add('visible');
+  }
+
+  calculate();
+  buildProForma();
+
+  // Clear status after 4 seconds
+  setTimeout(() => {
+    if (statusEl) statusEl.classList.remove('visible');
+  }, 4000);
+}
+
+function clearAll() {
+  const zeros = {
+    grossRent: '', vacancyRate: 5, otherIncome: 0,
+    monthlyDebt: '', purchasePrice: '', downPayment: 25,
+    propTax: 0, insurance: 0, hoa: 0,
+    maintenance: 0, propMgmt: 0, otherExp: 0,
+  };
+  Object.entries(zeros).forEach(([id, val]) => setField(id, val));
+
+  const ftEl = document.getElementById('financeType');
+  if (ftEl) ftEl.value = 'musharakah';
+
+  // Reset button highlights
+  [1, 2, 3].forEach(n => {
+    const btn = document.getElementById('sampleBtn' + n);
+    if (btn) btn.classList.remove('active-sample');
+  });
+
+  // Show clear status
+  const statusEl = document.getElementById('toolbarStatus');
+  if (statusEl) {
+    statusEl.textContent = 'All fields cleared.';
+    statusEl.classList.add('visible');
+    setTimeout(() => statusEl.classList.remove('visible'), 2500);
+  }
+
+  // Reset results panels
+  document.getElementById('dscrVerdict').innerHTML = '';
+  document.getElementById('summaryTable').innerHTML =
+    '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:20px;">Enter values above to calculate</td></tr>';
+  document.getElementById('dscrContext').innerHTML =
+    'Calculate your DSCR to see lender qualification context and Shariah-compliant financing institution benchmarks.';
+
+  const blankMetric = (valId, statusId, cardId) => {
+    document.getElementById(valId).textContent = '—';
+    document.getElementById(valId).className = 'metric-value';
+    if (statusId) { document.getElementById(statusId).textContent = '—'; document.getElementById(statusId).className = 'metric-status status-neutral'; }
+    if (cardId) document.getElementById(cardId).className = 'metric-card';
+  };
+  blankMetric('dscrValue', 'dscrStatus', 'mc-dscr');
+  blankMetric('noiValue', null, 'mc-noi');
+  blankMetric('cfValue', 'cfStatus', 'mc-cashflow');
+  blankMetric('capValue', 'capStatus', 'mc-cap');
+  ['grmValue','cocValue','expRatioValue','beoValue'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = '—'; el.className = 'metric-value'; }
+  });
+
+  document.getElementById('dscrBar').style.width = '0%';
+  document.getElementById('dscrBar').className = 'progress-bar';
+
+  // Clear report tab too
+  document.getElementById('reportContent').innerHTML = `
+    <div style="text-align:center;padding:50px;color:var(--text-muted);">
+      <div style="font-size:60px;margin-bottom:16px;">📊</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:8px;">No Analysis Yet</h3>
+      <p>Complete the DSCR Calculator to generate your full investment report.</p>
+      <button class="btn btn-gold" style="margin-top:16px;" onclick="showTab('dscr')">Go to DSCR Calculator</button>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderShariahChecks();
+  calculate();
+  buildProForma();
+});
+</script>
+</body>
+</html>
